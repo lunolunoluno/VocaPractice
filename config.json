@@ -1,0 +1,5 @@
+{
+    "nb_sentences": 10,
+    "vocab_file": "vocab/french_vocab.csv",
+    "target_language": "french"
+}
