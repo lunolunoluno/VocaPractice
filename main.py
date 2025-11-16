@@ -1,7 +1,8 @@
 import os
 import shutil
 
-from sentence_generator import SentenceGenerator
+from app_UI import AppUI
+
 
 if __name__ == "__main__":
 
@@ -9,9 +10,6 @@ if __name__ == "__main__":
     if not os.path.exists('.env'):
         shutil.copyfile('.env_model', '.env')
 
-    sg = SentenceGenerator()
-
-    print(sg.generate_sentences())
-
+    AppUI().launch_ui()
 
     

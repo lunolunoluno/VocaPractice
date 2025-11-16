@@ -16,6 +16,7 @@ class SentenceGenerator:
         os.environ["GOOGLE_API_KEY"] = get_GOOGLE_API_KEY()
         self.model = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite")
         
+
     def generate_sentences(self) -> List[dict]:
         df_vocab = self.pick_random_terms_from_vocab()
 
@@ -41,22 +42,24 @@ Generate {self.nb_sentences} sentences it the following format:
 }}
         """
 
-        print(prompt)
+        # print(prompt)
 
         answer = self.model.invoke(prompt).content
 
-        print(answer)
+        # print(answer)
         
         pattern = r'\{\s*"sentences"\s*:\s*\[.*?\]\s*,\s*"type"\s*:\s*"generated"\s*\}'
         match = re.search(pattern, answer, re.DOTALL)
         if match:
             json_str = match.group(0)
             data = json.loads(json_str)
+            # print(data['sentences'])
             return data['sentences']
         else:
             print("No JSON starting with 'sentences' found.")
             return []
         return []
+
 
     def pick_random_terms_from_vocab(self) -> pd.DataFrame:
         df = pd.read_csv(get_vocab_path())
