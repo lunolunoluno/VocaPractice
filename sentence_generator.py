@@ -36,7 +36,7 @@ Rules:
 Generate {self.nb_sentences} sentences it the following format:
 {{
     "sentences":[
-        {{"{self.target_language}": "[GENERATED SENTENCE HERE]", "english": "[ENGLISH TRANSLATION HERE]"}},
+        {{"sentence": "[GENERATED SENTENCE HERE]", "english": "[ENGLISH TRANSLATION HERE]"}},
     ],
     "type": "generated"
 }}

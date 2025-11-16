@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>VocaPractice</title>
+    <link href="main.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+    <h1>VocaPractice</h1>
+
+    <div class="tab">
+        <button id="Menu-btn" class="tablinks active" onclick="openTab('Menu')">Menu</button>
+        <button id="Exercices-btn" class="tablinks" onclick="openTab('Exercices')">Exercices</button>
+        <button id="Results-btn" class="tablinks" onclick="openTab('Results')">Results</button>
+    </div>
+
+    <div id="Menu" class="tabcontent" style="display: block;">
+        <button onclick="generateSentences()">Generate 10 Sentences</button>
+    </div>
+
+    <div id="Exercices" class="tabcontent">
+        <h3>Exercices</h3>
+        <div id="sentenceList"></div>
+        <button id="checkAnswersBtn">Check Answers</button>
+    </div>
+
+    <div id="Results" class="tabcontent">
+        <h3>Results</h3>
+        <div id="resultList"></div>
+    </div>
+
+    <hr>
+    <a href="https://github.com/lunolunoluno/VocaPractice" target="_blank">Source Code</a>
+    <script src="main.js"></script>
+</body>
+
+</html>

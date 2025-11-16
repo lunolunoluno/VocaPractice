@@ -29,5 +29,4 @@ Start the application with:
 python main.py
 ```
 
-After launching, Gradio will print a local URL in the terminal (typically http://127.0.0.1:7860).
-Open this link in your browser to access the app.
+After launching, your browser will open with the app running.
