@@ -3,3 +3,4 @@ flask-cors
 dotenv
 pandas
 langchain-google-genai
+python-Levenshtein

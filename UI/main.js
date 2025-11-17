@@ -39,12 +39,49 @@ function checkAnswers(){
         });
     }
 
-    console.log(user_answer_list);
-    //TODO: send this list to the backend
-    //TODO: update Results tab with info from backend
-
-    openTab("Results");
-    document.getElementById("checkAnswersBtn").onclick = null;
+    const bodyData = {
+        "sentences": user_answer_list
+    };
+    fetch("http://127.0.0.1:5000/evaluatesentences", {
+        method: 'POST',
+        body: JSON.stringify(bodyData),
+        headers: {
+            "Content-Type": "application/json",
+        }
+    }).then((response) => {
+        const responseData = response.json();
+        responseData.then((r) => {
+            const resultList = document.getElementById("resultList");
+            resultList.innerHTML = "";
+            r.forEach((element, index) => {
+                let diffs = "";
+                element.diff.forEach(d => {
+                    if (d[1] === " ") {
+                        diffs += `<span style="background-color: green;">
+                        ${d[0]}
+                        </span>`;
+                    }else{
+                        diffs += `<span style="background-color: red; border: 2px solid black;">
+                        ${d[1]}${d[0]}
+                        </span>`;
+                    }
+                });
+                resultList.innerHTML += `<div id="result-sentence-${index}">
+                    <h2>Sentence ${index+1}</h2>
+                    <p><b>English</b>:&emsp;&emsp;&emsp;&emsp;&emsp;${element.english}</p>
+                    <p><b>Your Answer</b>:&emsp;&emsp;&emsp;${element.answer}</p>
+                    <p><b>Expected Answer</b>:&emsp;${element.sentence}</p>
+                    <p>${diffs}</p>
+                    <p><b>Score</b>: ${element.score}</p>
+                </div>
+                <hr>`;
+            });
+            openTab("Results");
+            document.getElementById("checkAnswersBtn").onclick = null;
+        });
+    }).catch(() => {
+        alert("Error when checking the sentences!");
+    });
 }
 
 // modified from https://www.w3schools.com/howto/howto_js_tabs.asp
@@ -68,4 +105,6 @@ function openTab(tabName) {
     document.getElementById(tabName).style.display = "block";
     // evt.currentTarget.className += " active";
     document.getElementById(tabName+"-btn").className += " active";
+
+    scroll(0,0);
 } 

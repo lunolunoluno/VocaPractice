@@ -5,9 +5,12 @@
 - **Python version >3.10**
 - [A Google Gemini API Key](https://aistudio.google.com/app/api-keys)
 
+    The API key should be added to the `GOOGLE_API_KEY` entry in the `.env` file if it exists. If the file doesn't exists, either create the `.env` file with the same content as `.env_model` and fill the `GOOGLE_API_KEY` entry with the API key or directly fill the entry in the `.env_model` before running the app for the first time. 
+
 ### Setup
 
-It is recommended to create a Python [virtual environment](https://docs.python.org/3/library/venv.html)
+It is recommended to create a Python [virtual environment](https://docs.python.org/3/library/venv.html):
+
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate       # macOS / Linux
