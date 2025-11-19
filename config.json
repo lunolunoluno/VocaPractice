@@ -1,5 +1,12 @@
 {
     "nb_sentences": 10,
-    "vocab_file": "vocab/french_vocab.csv",
-    "target_language": "french"
+    "vocab_folder": "vocab/",
+    "selected_vocab_file": "vocab/french_example/french_vocab.csv",
+    "selected_target_language": "french",
+    "selected_llm": "gemini-2.5-flash-lite",
+    "available_llms": [
+        "gemini-2.5-flash-lite",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+    ]
 }

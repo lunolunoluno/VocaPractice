@@ -16,7 +16,18 @@
     </div>
 
     <div id="Menu" class="tabcontent" style="display: block;">
-        <button onclick="generateSentences()">Generate 10 Sentences</button>
+        <h2>Parameters</h2>
+        <p>Number of sentences: <span id="nbSentencesSpan">10</span><input type="range" min="1" max="10" value="10"
+                class="slider" id="nbSentencesSlider" onchange="nbSentencesSliderUpdated()"></p>
+        <p>Vocabulary: <select id="selectedVoc"></select></p>
+        <p>LLM: <select id="selectedLLM"></select> <i>(The stronger the LLM is, the longer it will take to generate sentences)</i></p>
+        <button onclick="updateParameters()">Update Parameters</button>
+        <hr>
+         <p>Will generate <b><span id="infoNbSentences">10</span></b> sentences using 
+            <b><span id="infoLLM">gemini-2.5-flash-lite</span></b> and vocabulary from 
+            <b>'<span id="infoVocab">vocab/french_example/french_vocab.csv</span>'</b>.
+        </p>
+        <button onclick="generateSentences()">Generate <span id="nbSentencesBtn">10</span> Sentences</button>
     </div>
 
     <div id="Exercices" class="tabcontent">
