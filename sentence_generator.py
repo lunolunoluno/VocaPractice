@@ -22,6 +22,7 @@ class SentenceGenerator:
         os.environ["GOOGLE_API_KEY"] = get_GOOGLE_API_KEY()
         self.model = ChatGoogleGenerativeAI(model=get_selected_llm())
 
+
     def generate_sentences(self) -> List[dict]:
         df_vocab = self.pick_random_terms_from_vocab()
 
@@ -47,11 +48,11 @@ Generate {self.nb_sentences} sentences it the following format:
 }}
         """
 
-        # print(prompt)
+        print(prompt)
 
         answer = self.model.invoke(prompt).content
 
-        # print(answer)
+        print(answer)
 
         pattern = r'\{\s*"sentences"\s*:\s*\[.*?\]\s*,\s*"type"\s*:\s*"generated"\s*\}'
         match = re.search(pattern, answer, re.DOTALL)
@@ -65,6 +66,7 @@ Generate {self.nb_sentences} sentences it the following format:
             return []
         return []
 
+
     def pick_random_terms_from_vocab(self) -> pd.DataFrame:
         df = pd.read_csv(get_vocab_path())
 
@@ -75,17 +77,30 @@ Generate {self.nb_sentences} sentences it the following format:
         max_nb_adj = min(self.nb_sentences // 2, len(df[df["type"] == "adjective"]))
         max_nb_adv = min(self.nb_sentences // 3, len(df[df["type"] == "adverb"]))
 
-        random_nouns = df[df["type"] == "noun"].sample(
-            n=randrange(max_nb_noun // 2, max_nb_noun)
+        random_nouns = (
+            df[df["type"] == "noun"].sample(n=randrange(max_nb_noun // 2, max_nb_noun))
+            if max_nb_noun > 0
+            else pd.DataFrame()
         )
-        random_verbs = df[df["type"] == "verb"].sample(
-            n=randrange(max_nb_verb // 2, max_nb_verb)
+
+        random_verbs = (
+            df[df["type"] == "verb"].sample(n=randrange(max_nb_verb // 2, max_nb_verb))
+            if max_nb_verb > 0
+            else pd.DataFrame()
         )
-        random_adjs = df[df["type"] == "adjective"].sample(
-            n=randrange(max_nb_adj // 2, max_nb_adj)
+
+        random_adjs = (
+            df[df["type"] == "adjective"].sample(
+                n=randrange(max_nb_adj // 2, max_nb_adj)
+            )
+            if max_nb_adj > 0
+            else pd.DataFrame()
         )
-        random_advs = df[df["type"] == "adverb"].sample(
-            n=randrange(max_nb_adv // 2, max_nb_adv)
+
+        random_advs = (
+            df[df["type"] == "adverb"].sample(n=randrange(max_nb_adv // 2, max_nb_adv))
+            if max_nb_adv > 0
+            else pd.DataFrame()
         )
 
         df_vocab = pd.concat([random_nouns, random_verbs, random_adjs, random_advs])

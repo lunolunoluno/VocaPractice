@@ -13,6 +13,7 @@ def get_diff_between_sentences(text: str, reference: str) -> List[Tuple[str, str
     diff = [
         (token[2:], token[0])
         for token in d.compare(text.split(), reference.split())
+        if token[0] in {'+', '-', ' '}
     ]
 
     return diff

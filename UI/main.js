@@ -13,7 +13,6 @@ function getParameters() {
     fetch("http://127.0.0.1:5000/getparameters").then((response) => {
         const responseData = response.json();
         responseData.then((r) => {
-            console.log(r);
             document.getElementById("nbSentencesSlider").value = r.nb_sentences;
             document.getElementById("nbSentencesSpan").innerText = r.nb_sentences;
 
@@ -33,7 +32,7 @@ function getParameters() {
                 const opt = document.createElement('option');
                 opt.value = element;
                 opt.innerHTML = element;
-                selectedLLM.appendChild(opt); 
+                selectedLLM.appendChild(opt);
             });
             selectedLLM.value = r.selected_llm;
 
@@ -55,6 +54,8 @@ function nbSentencesSliderUpdated() {
 
 
 function updateParameters() {
+    setWaitingGIF("waitParametersGIF", true);
+
     const nbSentences = document.getElementById("nbSentencesSlider").value;
     const selectedVocab = document.getElementById("selectedVoc").value;
     const selectedLLM = document.getElementById("selectedLLM").value;
@@ -67,9 +68,8 @@ function updateParameters() {
     const bodyData = {
         "nb_sentences": nbSentences,
         "selected_llm": selectedLLM,
-        "selected_vocab": selectedVocab 
+        "selected_vocab": selectedVocab
     };
-    console.log(bodyData);
 
     fetch("http://127.0.0.1:5000/updateparameters", {
         method: 'POST',
@@ -88,6 +88,7 @@ function updateParameters() {
                     alert(errorMsg);
                 });
             }
+            setWaitingGIF("waitParametersGIF", false);
         });
     });
 }
@@ -96,6 +97,9 @@ function updateParameters() {
 // EXERCICES TAB
 
 function generateSentences() {
+    setWaitingGIF("waitGenerateGIF", true);
+    openTab("Exercices");
+
     fetch("http://127.0.0.1:5000/generatesentences").then((response) => {
         const responseData = response.json();
         responseData.then((r) => {
@@ -110,8 +114,10 @@ function generateSentences() {
                 </div>
                 <hr>`;
             });
+            setWaitingGIF("waitGenerateGIF", false);
             document.getElementById("checkAnswersBtn").onclick = () => checkAnswers();
-            openTab("Exercices");
+        }).catch(() => {
+            alert("Error when generating sentences!");
         });
     }).catch(() => {
         alert("Error when generating sentences!");
@@ -122,6 +128,8 @@ function generateSentences() {
 // RESULTS TAB
 
 function checkAnswers() {
+    setWaitingGIF("waitResultGIF", true);
+    openTab("Results");
     const user_answer_list = [];
     for (let i = 0; i < target_sentences_list.length; i++) {
         user_answer_list.push({
@@ -168,7 +176,8 @@ function checkAnswers() {
                 </div>
                 <hr>`;
             });
-            openTab("Results");
+
+            setWaitingGIF("waitResultGIF", false);
             document.getElementById("checkAnswersBtn").onclick = null;
         });
     }).catch(() => {
@@ -202,4 +211,17 @@ function openTab(tabName) {
     document.getElementById(tabName + "-btn").className += " active";
 
     scroll(0, 0);
-} 
+}
+
+
+function setWaitingGIF(divID, turnOn) {
+    if (turnOn) {
+        const waitingGif = document.createElement('img');
+        waitingGif.src = './media/waiting.gif';
+        waitingGif.width = 50;
+        waitingGif.height = 50;
+        document.getElementById(divID).appendChild(waitingGif);
+    } else {
+        document.getElementById(divID).innerHTML = "";
+    }
+}
