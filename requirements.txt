@@ -1,3 +1,4 @@
+deepl
 Flask
 flask-cors
 dotenv

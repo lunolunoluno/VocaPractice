@@ -8,6 +8,7 @@ from random import randrange
 from langchain_google_genai import ChatGoogleGenerativeAI
 from utils import (
     get_nb_sentences,
+    get_target_language_code,
     get_vocab_path,
     get_target_language,
     get_selected_llm,
@@ -59,8 +60,9 @@ Generate {self.nb_sentences} sentences it the following format:
         if match:
             json_str = match.group(0)
             data = json.loads(json_str)
+            data["target_lang"] = get_target_language_code()
             # print(data['sentences'])
-            return data["sentences"]
+            return data
         else:
             print("No JSON starting with 'sentences' found.")
             return []

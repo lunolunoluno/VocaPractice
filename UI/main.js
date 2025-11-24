@@ -1,6 +1,7 @@
 "use strict";
 
 let target_sentences_list = [];
+let target_lang = "";
 
 window.onload = function () {
     getParameters();
@@ -103,10 +104,11 @@ function generateSentences() {
     fetch("http://127.0.0.1:5000/generatesentences").then((response) => {
         const responseData = response.json();
         responseData.then((r) => {
+            target_lang = r.target_lang;
             target_sentences_list = [];
             const sentenceList = document.getElementById("sentenceList");
             sentenceList.innerHTML = "";
-            r.forEach((element, index) => {
+            r.sentences.forEach((element, index) => {
                 target_sentences_list.push(element.sentence);
                 sentenceList.innerHTML += `<div id="sentence-${index}">
                     <p id="englishsentence-${index}">${element.english}</p>
@@ -135,7 +137,8 @@ function checkAnswers() {
         user_answer_list.push({
             "sentence": target_sentences_list[i],
             "english": document.getElementById(`englishsentence-${i}`).innerText,
-            "answer": document.getElementById(`answer-${i}`).value
+            "answer": document.getElementById(`answer-${i}`).value,
+            "target_lang": target_lang
         });
     }
 

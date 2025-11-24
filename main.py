@@ -4,6 +4,7 @@ import webbrowser
 
 from flask_cors import CORS
 from flask import Flask, request
+from translator import Translator
 from sentence_generator import SentenceGenerator
 from sentence_evaluator import (
     calculate_score,
@@ -20,6 +21,7 @@ from utils import (
     set_nb_sentences,
     set_vocab,
     set_selected_llm,
+    use_deepl_translation,
 )
 
 app = Flask(__name__)
@@ -68,8 +70,19 @@ def post_evaluate_sentences():
     for s in sentences:
         clean_text = remove_punctuation(s["answer"]).lower()
         clean_reference = remove_punctuation(s["sentence"]).lower()
+        score = calculate_score(clean_text, clean_reference)
+
+        if use_deepl_translation():
+            t = Translator()
+            trans_reference = remove_punctuation(t.get_deepl_tranlation(s["english"], s["target_lang"])).lower()
+            print(f"{s["english"]}({s["sentence"]}) DeepL tranlate: {trans_reference}")
+            trans_score = calculate_score(clean_text, trans_reference)
+            if trans_score > score:
+                score = trans_score
+                clean_reference = trans_reference
+            
         s["diff"] = get_diff_between_sentences(clean_text, clean_reference)
-        s["score"] = f"{calculate_score(clean_text, clean_reference)}%"
+        s["score"] = f"{score}%"
 
     return sentences
 

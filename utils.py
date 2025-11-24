@@ -87,6 +87,19 @@ def get_target_language() -> str:
     return ""
 
 
+def get_target_language_code() -> str:
+    with open("config.json", "r") as file:
+        data = json.load(file)
+        vocab_folder = os.path.dirname(data["selected_vocab_file"])
+        vocab_info = os.path.join(vocab_folder, "vocab_info.json")
+        if os.path.exists(vocab_info):
+            with open(vocab_info) as v_i:
+                v_i = json.load(v_i)
+                if "target_language_code" in v_i:
+                    return v_i["target_language_code"]
+    return ""
+
+
 def set_vocab(vocab_path: str) -> bool:
     if not os.path.exists(vocab_path):
         return False
@@ -141,3 +154,10 @@ def get_all_llms() -> List[str]:
         data = json.load(file)
         return data["available_llms"]
     return ""
+
+
+def use_deepl_translation() -> bool:
+    with open("config.json", "r") as file:
+        data = json.load(file)
+        return data["use_deepl_translation"]
+    return False

@@ -1,4 +1,5 @@
 {
     "target_language": "french",
+    "target_language_code": "FR",
     "vocab_file": "french_vocab.csv"
 }
