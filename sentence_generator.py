@@ -14,6 +14,12 @@ from utils import (
     get_selected_llm,
     get_GOOGLE_API_KEY,
 )
+from database_manager import (
+    insert_or_ignore_language,
+    create_new_request,
+    insert_sentence,
+    link_vocab_to_request,
+)
 
 
 class SentenceGenerator:
@@ -55,13 +61,17 @@ Generate {self.nb_sentences} sentences it the following format:
 
         print(answer)
 
+        # TODO: create guardrails/system to re-ask the prompt when LLM doesn't answer properly
         pattern = r'\{\s*"sentences"\s*:\s*\[.*?\]\s*,\s*"type"\s*:\s*"generated"\s*\}'
         match = re.search(pattern, answer, re.DOTALL)
         if match:
             json_str = match.group(0)
             data = json.loads(json_str)
             data["target_lang"] = get_target_language_code()
-            # print(data['sentences'])
+            data["request_id"] = self.save_request(
+                sentences=data["sentences"],
+                vocab=df_vocab
+            )
             return data
         else:
             print("No JSON starting with 'sentences' found.")
@@ -108,3 +118,25 @@ Generate {self.nb_sentences} sentences it the following format:
         df_vocab = pd.concat([random_nouns, random_verbs, random_adjs, random_advs])
 
         return df_vocab
+    
+    # TODO: add safeguards in case errors happens when saving info to database
+    def save_request(self, sentences: list, vocab: pd.DataFrame) -> int:
+        target_language_code = get_target_language_code()
+
+        # save language if it's not already saved
+        insert_or_ignore_language(target_language_code, get_target_language())
+
+        request_id = create_new_request()
+
+        # save the sentences
+        for s in sentences:
+            insert_sentence(s["english"], s["sentence"], request_id, target_language_code)
+
+        # save the vocabulary
+        for row in vocab.itertuples(index=False):
+            link_vocab_to_request(row.term, row.meanings, row.type, target_language_code, request_id)
+
+
+        return request_id
+
+

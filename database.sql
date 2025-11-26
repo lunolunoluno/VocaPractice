@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS "request" (
 CREATE TABLE IF NOT EXISTS "vocabulary" (
     "term_id"   INTEGER NOT NULL UNIQUE,
     "term"      TEXT NOT NULL,
-    "meaning"   TEXT,
+    "meaning"   TEXT NOT NULL,
+    "type"      TEXT NOT NULL,
     "fk_language_code" TEXT NOT NULL,
     FOREIGN KEY ("fk_language_code") REFERENCES "language"("language_code"),
 	PRIMARY KEY("term_id" AUTOINCREMENT)
