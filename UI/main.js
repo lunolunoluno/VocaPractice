@@ -1,8 +1,5 @@
 "use strict";
 
-let target_sentences_list = [];
-let target_lang = "";
-
 window.onload = function () {
     getParameters();
 }
@@ -16,6 +13,7 @@ function getParameters() {
         responseData.then((r) => {
             document.getElementById("nbSentencesSlider").value = r.nb_sentences;
             document.getElementById("nbSentencesSpan").innerText = r.nb_sentences;
+            sessionStorage.setItem("nb_sentences", r.nb_sentences);
 
             const vocabSelect = document.getElementById("selectedVoc");
             selectedVoc.innerHTML = "";
@@ -61,6 +59,7 @@ function updateParameters() {
     const selectedVocab = document.getElementById("selectedVoc").value;
     const selectedLLM = document.getElementById("selectedLLM").value;
 
+    sessionStorage.setItem("nb_sentences", nbSentences);
     document.getElementById("nbSentencesBtn").innerText = nbSentences;
     document.getElementById("infoNbSentences").innerText = nbSentences;
     document.getElementById("infoVocab").innerText = selectedVocab;
@@ -104,14 +103,12 @@ function generateSentences() {
     fetch("http://127.0.0.1:5000/generatesentences").then((response) => {
         const responseData = response.json();
         responseData.then((r) => {
-            target_lang = r.target_lang;
-            target_sentences_list = [];
+            sessionStorage.setItem("request_id", r.request_id);
             const sentenceList = document.getElementById("sentenceList");
             sentenceList.innerHTML = "";
             r.sentences.forEach((element, index) => {
-                target_sentences_list.push(element.sentence);
                 sentenceList.innerHTML += `<div id="sentence-${index}">
-                    <p id="englishsentence-${index}">${element.english}</p>
+                    <p id="englishsentence-${index}" data-sentence_id=${element.sentence_id}>${element.english}</p>
                     <input type="text" id="answer-${index}">
                 </div>
                 <hr>`;
@@ -133,17 +130,17 @@ function checkAnswers() {
     setWaitingGIF("waitResultGIF", true);
     openTab("Results");
     const user_answer_list = [];
-    for (let i = 0; i < target_sentences_list.length; i++) {
+    for (let i = 0; i < sessionStorage.getItem("nb_sentences"); i++) {
         user_answer_list.push({
-            "sentence": target_sentences_list[i],
+            "sentence_id": document.getElementById(`englishsentence-${i}`).dataset.sentence_id,
             "english": document.getElementById(`englishsentence-${i}`).innerText,
-            "answer": document.getElementById(`answer-${i}`).value,
-            "target_lang": target_lang
+            "answer": document.getElementById(`answer-${i}`).value
         });
     }
 
     const bodyData = {
-        "sentences": user_answer_list
+        "sentences": user_answer_list,
+        "request_id": sessionStorage.getItem("request_id")
     };
     fetch("http://127.0.0.1:5000/evaluatesentences", {
         method: 'POST',

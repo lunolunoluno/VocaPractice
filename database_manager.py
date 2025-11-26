@@ -99,3 +99,24 @@ def link_vocab_to_request(term: str, meaning: str, type_: str, language_code: st
         conn.commit()
     
     return term_id
+
+
+def get_sentence(sentence_id: int) -> dict:
+    with sqlite3.connect(database_path) as conn:
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT english, translation, fk_language_code 
+            FROM sentence
+            WHERE sentence_id = ?
+        """, (sentence_id,))
+
+        row = cursor.fetchone()
+        if row is not None:
+            return {
+                "english": row[0],
+                "translation": row[1],
+                "language_code": row[2]
+            }
+
+    return None
