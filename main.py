@@ -5,6 +5,7 @@ import webbrowser
 from flask_cors import CORS
 from flask import Flask, request
 from translator import Translator
+from database_manager import create_database
 from sentence_generator import SentenceGenerator
 from sentence_evaluator import (
     calculate_score,
@@ -92,6 +93,8 @@ if __name__ == "__main__":
     # create .env file if it doesn't exists
     if not os.path.exists(".env"):
         shutil.copyfile(".env_model", ".env")
+
+    create_database()
 
     ui_path = os.path.join(".", "UI", "index.html")
     webbrowser.open(ui_path)

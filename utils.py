@@ -161,3 +161,29 @@ def use_deepl_translation() -> bool:
         data = json.load(file)
         return data["use_deepl_translation"]
     return False
+
+
+def get_all_languages() -> List[Tuple[str, str]]:
+    languages = []
+    vocab_folder = get_vocab_folder()
+    for dirpath, dirnames, filenames in os.walk(vocab_folder):
+        if dirpath == vocab_folder:
+            continue
+        if "vocab_info.json" not in filenames:
+            continue
+
+        vocab_info_path = os.path.join(dirpath, "vocab_info.json")
+        if os.path.exists(vocab_info_path):
+            with open(vocab_info_path, "r") as vocab_info:
+                vocab_info_data = json.load(vocab_info)
+                if (
+                    "target_language_code" in vocab_info_data
+                    and "target_language" in vocab_info_data
+                ):
+                    languages.append(
+                        (
+                            vocab_info_data["target_language_code"],
+                            vocab_info_data["target_language"],
+                        )
+                    )
+    return languages
