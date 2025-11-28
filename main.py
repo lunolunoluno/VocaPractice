@@ -5,7 +5,7 @@ import webbrowser
 from flask_cors import CORS
 from flask import Flask, request
 from translator import Translator
-from database_manager import create_database, get_sentence
+from database_manager import create_database, get_request_vocab, get_sentence
 from sentence_generator import SentenceGenerator
 from sentence_evaluator import (
     calculate_score,
@@ -57,10 +57,7 @@ def post_update_parameters():
     if not set_use_deepl_translation(data["use_deepl"]):
         errors.append("Error when updating DeepL usage!")
 
-    return {"status": "ok"} if len(errors) == 0 else {
-        "status": "nok",
-        "errors": errors
-    }
+    return {"status": "ok"} if len(errors) == 0 else {"status": "nok", "errors": errors}
 
 
 @app.get("/generatesentences")
@@ -74,25 +71,43 @@ def post_evaluate_sentences():
     data = request.get_json()
     sentences = data["sentences"]
 
+    if use_deepl_translation():
+        t = Translator()
+        vocab = get_request_vocab(data["request_id"])
+        glossary_id = t.deepl_create_request_glossary(
+            vocab=vocab,
+            target_language_code=data["target_lang"],
+            request_id=data["request_id"],
+        )
+
     for s in sentences:
         sentence_data = get_sentence(s["sentence_id"])
 
         clean_text = remove_punctuation(s["answer"]).lower()
         clean_reference = remove_punctuation(sentence_data["translation"]).lower()
+        s["sentence"] = sentence_data["translation"]
         score = calculate_score(clean_text, clean_reference)
 
         if use_deepl_translation():
-            t = Translator()
-            trans_reference = remove_punctuation(t.get_deepl_tranlation(sentence_data["english"], sentence_data["language_code"])).lower()
-            print(f"{sentence_data["english"]}({sentence_data["translation"]}) DeepL tranlate: {trans_reference}")
-            trans_score = calculate_score(clean_text, trans_reference)
+            trans_reference = t.get_deepl_tranlation(
+                text=sentence_data["english"],
+                target_language_code=sentence_data["language_code"],
+                glossary_id=glossary_id,
+            )
+            print(
+                f"{sentence_data["english"]}({sentence_data["translation"]}) DeepL tranlate: {trans_reference}"
+            )
+            trans_score = calculate_score(clean_text, remove_punctuation(trans_reference).lower())
             if trans_score > score:
                 score = trans_score
-                clean_reference = trans_reference
-        
-        s["sentence"] = sentence_data["translation"]
+                clean_reference = remove_punctuation(trans_reference).lower()
+                s["sentence"] = trans_reference
+
         s["diff"] = get_diff_between_sentences(clean_text, clean_reference)
         s["score"] = f"{score}%"
+
+    if glossary_id:
+        t.deepl_delete_request_glossary(glossary_id)
 
     return sentences
 

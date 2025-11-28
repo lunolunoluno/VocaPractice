@@ -112,6 +112,7 @@ function generateSentences() {
         const responseData = response.json();
         responseData.then((r) => {
             sessionStorage.setItem("request_id", r.request_id);
+            sessionStorage.setItem("target_lang", r.target_lang);
             const sentenceList = document.getElementById("sentenceList");
             sentenceList.innerHTML = "";
             r.sentences.forEach((element, index) => {
@@ -148,7 +149,8 @@ function checkAnswers() {
 
     const bodyData = {
         "sentences": user_answer_list,
-        "request_id": sessionStorage.getItem("request_id")
+        "request_id": sessionStorage.getItem("request_id"),
+        "target_lang": sessionStorage.getItem("target_lang")
     };
     fetch("http://127.0.0.1:5000/evaluatesentences", {
         method: 'POST',

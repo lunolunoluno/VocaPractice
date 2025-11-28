@@ -120,3 +120,31 @@ def get_sentence(sentence_id: int) -> dict:
             }
 
     return None
+
+
+def get_request_vocab(request_id: int) -> dict:
+    with sqlite3.connect(database_path) as conn:
+        vocab = {}
+
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT fk_term_id 
+            FROM request_vocabulary
+            WHERE fk_request_id = ?
+        """, (request_id,))
+
+        for row in cursor.fetchall():
+            cursor.execute("""
+                SELECT term, meaning 
+                FROM vocabulary
+                WHERE term_id = ?
+            """, (row[0],))
+
+            term = cursor.fetchone()
+            if term is not None:
+                vocab[term[1]] = term[0] 
+        
+        return vocab
+    return None
+
