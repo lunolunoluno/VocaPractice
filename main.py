@@ -77,7 +77,7 @@ def post_evaluate_sentences():
 
         if use_deepl_translation():
             t = Translator()
-            trans_reference = remove_punctuation(t.get_deepl_tranlation(sentence_data["english"], sentence_data["target_lang"])).lower()
+            trans_reference = remove_punctuation(t.get_deepl_tranlation(sentence_data["english"], sentence_data["language_code"])).lower()
             print(f"{sentence_data["english"]}({sentence_data["translation"]}) DeepL tranlate: {trans_reference}")
             trans_score = calculate_score(clean_text, trans_reference)
             if trans_score > score:
