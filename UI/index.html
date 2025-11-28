@@ -21,6 +21,7 @@
                 class="slider" id="nbSentencesSlider" onchange="nbSentencesSliderUpdated()"></p>
         <p>Vocabulary: <select id="selectedVoc"></select></p>
         <p>LLM: <select id="selectedLLM"></select> <i>(The stronger the LLM is, the longer it will take to generate sentences)</i></p>
+        <p>Use DeepL Translation: <input type="checkbox" id="useDeepL"></p>
         <button onclick="updateParameters()">Update Parameters</button>
         <hr>
          <p>Will generate <b><span id="infoNbSentences">10</span></b> sentences using 

@@ -20,6 +20,7 @@ from utils import (
     get_selected_llm,
     get_all_llms,
     set_nb_sentences,
+    set_use_deepl_translation,
     set_vocab,
     set_selected_llm,
     use_deepl_translation,
@@ -38,6 +39,8 @@ def get_parameters():
         "vocab_list": get_all_vocabs(),
         "llms": get_all_llms(),
         "selected_llm": get_selected_llm(),
+        "deepl_enabled": os.getenv("DEEPL_API_KEY").strip() != "",
+        "use_deepl": use_deepl_translation(),
     }
 
 
@@ -51,6 +54,9 @@ def post_update_parameters():
         errors.append("Error when updating the selected vocabulary!")
     if not set_selected_llm(data["selected_llm"]):
         errors.append("Error when updating selected LLM!")
+    if not set_use_deepl_translation(data["use_deepl"]):
+        errors.append("Error when updating DeepL usage!")
+
     return {"status": "ok"} if len(errors) == 0 else {
         "status": "nok",
         "errors": errors

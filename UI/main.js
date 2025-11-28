@@ -35,6 +35,12 @@ function getParameters() {
             });
             selectedLLM.value = r.selected_llm;
 
+            if (r.deepl_enabled) {
+                document.getElementById("useDeepL").checked = r.use_deepl;
+            } else {
+                document.getElementById("useDeepL").disabled = true;
+            }
+
             document.getElementById("nbSentencesBtn").innerText = r.nb_sentences;
             document.getElementById("infoNbSentences").innerText = r.nb_sentences;
             document.getElementById("infoVocab").innerText = r.selected_vocab;
@@ -58,6 +64,7 @@ function updateParameters() {
     const nbSentences = document.getElementById("nbSentencesSlider").value;
     const selectedVocab = document.getElementById("selectedVoc").value;
     const selectedLLM = document.getElementById("selectedLLM").value;
+    const useDeepL = document.getElementById("useDeepL").checked;
 
     sessionStorage.setItem("nb_sentences", nbSentences);
     document.getElementById("nbSentencesBtn").innerText = nbSentences;
@@ -68,7 +75,8 @@ function updateParameters() {
     const bodyData = {
         "nb_sentences": nbSentences,
         "selected_llm": selectedLLM,
-        "selected_vocab": selectedVocab
+        "selected_vocab": selectedVocab,
+        "use_deepl": useDeepL
     };
 
     fetch("http://127.0.0.1:5000/updateparameters", {

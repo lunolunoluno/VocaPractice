@@ -43,12 +43,7 @@ In an attempt to improve accuracy, this project includes optional support for th
 
 To enable it:
 
-1.  go in the `config.json` file and set:
+1. Get a DeepL API key: https://www.deepl.com/en/pro-api
 
-```json
- "use_deepl_translation": true
-```
-2. Get a DeepL API key: https://www.deepl.com/en/pro-api
-
-3. Add the API key to the `DEEPL_API_KEY` field in your `.env` file
-(or in `.env_model` if `.env` does not yet exist).
+2. Add the API key to the `DEEPL_API_KEY` field in your `.env` file
+(or in `.env_model` if `.env` does not yet exist) and restart the application if it is running.

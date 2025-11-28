@@ -163,6 +163,16 @@ def use_deepl_translation() -> bool:
     return False
 
 
+def set_use_deepl_translation(use: bool) -> bool:
+    with open("config.json", "r") as file:
+        data = json.load(file)
+    data["use_deepl_translation"] = use
+    with open("config.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+        return True
+    return False
+
+
 def get_all_languages() -> List[Tuple[str, str]]:
     languages = []
     vocab_folder = get_vocab_folder()
