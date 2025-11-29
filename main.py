@@ -88,7 +88,7 @@ def post_evaluate_sentences():
         s["sentence"] = sentence_data["translation"]
         score = calculate_score(clean_text, clean_reference)
 
-        if use_deepl_translation():
+        if use_deepl_translation() and score < 100:
             trans_reference = t.get_deepl_tranlation(
                 text=sentence_data["english"],
                 target_language_code=sentence_data["language_code"],
